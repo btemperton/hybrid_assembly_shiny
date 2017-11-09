@@ -56,10 +56,9 @@ plot.GC.vs.coverage<-function(input, df, ranges){
 
 plot.cluster.summary<-function(input, df, cluster_df){
   if(!is.null(input$clusters_rows_selected)){
-    filtered<-apply.filters(input, df)
     cluster_df<-prepare.cluster.dataframe(input, cluster_df)
     selected <- cluster_df[input$clusters_rows_selected, ]$cluster_name
-    filtered <- filtered %>% filter(cluster_name == selected)
+    filtered <- df %>% filter(cluster_name == selected)
     p <- plot.cluster.alignment(filtered)
     return(p)
   }
@@ -104,13 +103,13 @@ plot.cluster.alignment<-function(cluster_df){
   colourCount <- length(unique(members_final$contig_id))
 
   p<- ggplot(members_final) + 
-    geom_segment(aes(x=ref_start, 
-                     xend=ref_finish,
-                     y=ranking, 
-                     yend=ranking,
-                     color=contig_id), size=8) + xlab('locus of representative (bp)') +
+    geom_rect(aes(xmin=ref_start, 
+                     xmax=ref_finish,
+                     ymin=ranking-0.5, 
+                     ymax=ranking+0.5,
+                     fill=contig_id), size=1, color='black') + xlab('locus of representative (bp)') +
     ggtitle(paste(cluster_name, 'alignments')) + 
-    scale_colour_manual(values = colorRampPalette(solarized_pal()(8))(colourCount)) + 
+    scale_fill_manual(values = colorRampPalette(solarized_pal()(8))(colourCount)) + 
     theme(legend.position='none',
           plot.title = element_text(face="bold", size=16, hjust=0),
           axis.title.y=element_blank(),
