@@ -14,8 +14,10 @@ apply.filters<-function(input, df){
     }
   }
   
-  if (!is.null(input$read_type)){
-    filtered <-filtered %>% filter(contig_type==input$read_type)
+  if (input$read_type=='short'){
+    filtered <-filtered %>% filter(contig_type=='S')
+  } else if (input$read_type=='hybrid'){
+    filtered <-filtered %>% filter(contig_type=='H')
   }
   
 
