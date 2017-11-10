@@ -38,6 +38,7 @@ server <- function(input, output) {
   output$contig_plot <- renderPlot(plot.GC.vs.coverage(input, df, ranges))
   
   output$contig_info <- renderTable({
+    
     nearPoints(apply.filters(input, df),
                input$contig_plot_click, threshold = 10, maxpoints = 15,
                addDist = TRUE)
