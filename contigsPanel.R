@@ -7,8 +7,8 @@ load.contigs.panel<-function(){
                                 label="Minimum contig length:",
                                 min = 2500,
                                 max = 500000,
-                                step=1000,
-                                value = 10000),
+                                step=500,
+                                value = 10000, 500000),
                     checkboxInput(inputId = 'VirFinder',
                                   label='VirFinder viral'),
                     
