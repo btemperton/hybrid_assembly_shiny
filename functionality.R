@@ -24,11 +24,6 @@ apply.filters<-function(input, df){
   return(filtered)
 }
 
-prepare.contig.dataframe<-function(input, df){
-  filtered<-apply.filters(input, df)
-  
-  return(filtered)
-}
 
 prepare.cluster.dataframe<-function(input, cluster_df){
   
@@ -39,19 +34,6 @@ prepare.cluster.dataframe<-function(input, cluster_df){
   return(cluster_df)
 }
 
-
-plot.GC.vs.coverage<-function(input, df, ranges){
-  filtered<-apply.filters(input, df)
-  p<-ggplot(filtered, aes(x=GC, y=mean_coverage)) +
-    geom_point(aes(fill=virsorter_category, size=contig_len), color='black', pch=21, stroke=1, alpha=0.5) +
-    xlab('GC %') + 
-    ylab('Mean Coverage') +
-    scale_y_log10() +
-    scale_colour_solarized() + 
-    scale_size_continuous(range = c(1,12)) +
-    coord_cartesian(xlim = ranges$x, ylim = ranges$y)
-  return(p)
-}
 
 plot.cluster.summary<-function(input, df, cluster_df){
   if(!is.null(input$clusters_rows_selected)){
