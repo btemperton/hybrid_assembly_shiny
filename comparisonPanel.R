@@ -1,5 +1,21 @@
 load.comparison.panel<-function(cluster_df){
   return(tabPanel("Clusters",
+            fluidRow(column(9, h1("Cluster Analysis"), HTML("
+<p>Here, you can examine the content of the clusters. Clusters were created by combining all short and hybrid scaffolds and then
+clustering them at 95% identity and 80% length into 'viral OTUs'. 
+You can click on a cluster to show how its members aligned against the reference sequence (the one at the top). The alignment plot is ordered
+from top to bottom on scaffold length. The alignments can be colored by selecting an appropriate scheme on the left-hand side. You
+can also filter the number of clusters by size and whether any members were identified as viral, either by VirSorter, or by VirFinder.
+There are several types of cluster:</p>
+<ul>
+<li><b>Hybrid Extension</b> - The longest read in a cluster is from the hybrid assembly and typically denotes a cluster where short-read scaffolds 
+have been increased in length, or scaffolded by the long reads </li>
+<li><b>Identical</b> - The cluster comprises of two members, each of identical length. In the alignment plot, these will appear as one block</li>
+<li><b>Short longer than hybrid</b> - The longest member of the cluster is from the short-read assembly</li>
+<li><b>Singleton S/H</b> - The cluster consists of only one member, either a short or hybrid scaffold</li>
+<li><b>Unclassified</b> - A cluster that did not meet one of the above criteria</li>
+</ul><hr/>
+                                        "))),
             fluidRow(
               column(2,
                 sliderInput(inputId = "cluster_min_length",
@@ -129,7 +145,12 @@ plot.cluster.alignment<-function(cluster_df, input){
                       ymin=ranking-0.5, 
                       ymax=ranking+0.5,
                       fill=contig_id), size=1, color='black') + 
-        scale_fill_manual(values = colorRampPalette(solarized_pal()(8))(colourCount)) 
+        scale_fill_manual(values = colorRampPalette(solarized_pal()(8))(colourCount))  + 
+        theme(legend.position='none',
+              plot.title = element_text(face="bold", size=16, hjust=0),
+              axis.title.y=element_blank(),
+              axis.text.y=element_blank(),
+              axis.ticks.y=element_blank())
   } else if (input$contig_color_scheme=='pt'){
     p <- p + 
       geom_rect(aes(xmin=ref_start, 
@@ -137,7 +158,12 @@ plot.cluster.alignment<-function(cluster_df, input){
                     ymin=ranking-0.5, 
                     ymax=ranking+0.5,
                     fill=contig_type), size=1, color='black') + xlab('locus of representative (bp)') +
-      scale_fill_solarized(accent='green')
+      scale_fill_solarized(accent='green')  + 
+      theme(legend.position='bottom',
+            plot.title = element_text(face="bold", size=16, hjust=0),
+            axis.title.y=element_blank(),
+            axis.text.y=element_blank(),
+            axis.ticks.y=element_blank())
   } else {
     p <- p + 
       geom_rect(aes(xmin=ref_start, 
@@ -145,15 +171,15 @@ plot.cluster.alignment<-function(cluster_df, input){
                     ymin=ranking-0.5, 
                     ymax=ranking+0.5,
                     fill=is_viral), size=1, color='black') + xlab('locus of representative (bp)') +
-      scale_fill_manual(values = c('skyblue4', 'skyblue1'))
+      scale_fill_manual(values = c('skyblue4', 'skyblue1'))  + 
+      theme(legend.position='bottom',
+            plot.title = element_text(face="bold", size=16, hjust=0),
+            axis.title.y=element_blank(),
+            axis.text.y=element_blank(),
+            axis.ticks.y=element_blank())
   }
   
   p <- p + xlab('locus of representative (bp)') +
-        ggtitle(paste(cluster_name, 'alignments')) + 
-    theme(legend.position='none',
-          plot.title = element_text(face="bold", size=16, hjust=0),
-          axis.title.y=element_blank(),
-          axis.text.y=element_blank(),
-          axis.ticks.y=element_blank())
+        ggtitle(paste(cluster_name, 'alignments'))
   return(p)
 }

@@ -1,5 +1,10 @@
 load.contigs.panel<-function(){
   return(tabPanel("Contigs",
+           fluidRow(column(9, h1("Contig Analysis"), p("Here, we can explore the short read only scaffolds (S) and hybrid scaffolds (H) from a marine virome
+                                  from the Western English Channel. You can filter the data using the controls on the left hand side
+                                  of the page. Clicking on a point on the graph will show the 15 nearest scaffolds to that point in the
+                                  table below. You can also draw a box on the graph and double-click to zoom in.
+                                 "))),
            fluidRow(
              
              column(2,
