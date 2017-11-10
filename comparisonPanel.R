@@ -12,9 +12,13 @@ load.comparison.panel<-function(cluster_df){
                selectInput(inputId = 'hybrid_rep',
                            label='Cluster Type:',
                            choices=c('Choose a type ...' = 0, unique(cluster_df$type))),
+               selectInput(inputId = 'viral_ratio',
+                           label='Viral Evidence:',
+                           choices=c('Choose a type ...' = 'empty', 'Some viral members' = 'svm', 'All viral' = 'av', 'No viral' = 'nv')),
                radioButtons(inputId = "contig_color_scheme", "Color scheme:",
                             c("Per Contig" = "pc",
-                              "Per Type" = "pt"))
+                              "Per Type" = "pt", 
+                              "Per viralness" = "pv"))
                
               ),
             column(7,   
@@ -31,6 +35,13 @@ load.comparison.panel<-function(cluster_df){
 
 filter.clusters<-function(input, cluster_df){
   filtered <- cluster_df %>% filter(representative_length >= input$cluster_min_length)
+  if(input$viral_ratio=='svm'){
+    filtered <- filtered %>% filter(viral_ratio >0)
+  } else if (input$viral_ratio=='av'){
+    filtered <- filtered %>% filter(viral_ratio == 1)
+  } else if (input$viral_ratio=='nv'){
+    filtered <- filtered %>% filter(viral_ratio == 0)
+  }
   return(filtered)
 }
 
@@ -75,7 +86,7 @@ plot.cluster.counts<-function(input, cluster_df){
 plot.cluster.alignment<-function(cluster_df, input){
   cluster_name <-unique(cluster_df$cluster_name)
   cluster<- cluster_df %>% 
-    select(contig_id, contig_len, ref_start,ref_finish, is_cluster_representative, contig_type) %>%
+    select(contig_id, contig_len, ref_start,ref_finish, is_cluster_representative, contig_type, virfinder_qvalue, virsorter_category) %>%
     arrange(desc(contig_len))
   
   
@@ -105,9 +116,9 @@ plot.cluster.alignment<-function(cluster_df, input){
   
   members_final<-members_start %>% bind_rows(representative) %>%
     mutate(ranking = dense_rank(contig_len), 
-           full_length=max(contig_len))
-  
-  
+           full_length=max(contig_len),
+           is_viral=(virfinder_qvalue <= 0.05 | virsorter_category %in% c(1,2,4,5)))
+    
   colourCount <- length(unique(members_final$contig_id))
   
   p<- ggplot(members_final) 
@@ -119,19 +130,22 @@ plot.cluster.alignment<-function(cluster_df, input){
                       ymax=ranking+0.5,
                       fill=contig_id), size=1, color='black') + 
         scale_fill_manual(values = colorRampPalette(solarized_pal()(8))(colourCount)) 
-  } else {
+  } else if (input$contig_color_scheme=='pt'){
     p <- p + 
       geom_rect(aes(xmin=ref_start, 
                     xmax=ref_finish,
                     ymin=ranking-0.5, 
                     ymax=ranking+0.5,
                     fill=contig_type), size=1, color='black') + xlab('locus of representative (bp)') +
-      scale_fill_solarized(accent='green') + 
-      theme(legend.position='bottom',
-            plot.title = element_text(face="bold", size=16, hjust=0),
-            axis.title.y=element_blank(),
-            axis.text.y=element_blank(),
-            axis.ticks.y=element_blank())
+      scale_fill_solarized(accent='green')
+  } else {
+    p <- p + 
+      geom_rect(aes(xmin=ref_start, 
+                    xmax=ref_finish,
+                    ymin=ranking-0.5, 
+                    ymax=ranking+0.5,
+                    fill=is_viral), size=1, color='black') + xlab('locus of representative (bp)') +
+      scale_fill_manual(values = c('skyblue4', 'skyblue1'))
   }
   
   p <- p + xlab('locus of representative (bp)') +

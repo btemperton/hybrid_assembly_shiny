@@ -12,7 +12,7 @@ df = read.csv('short.hybrid.cluster.data.csv', header=TRUE,
 df$virsorter_category <- as.factor(df$virsorter_category)
 
 cluster_df <- read.csv('clusters.csv', header=TRUE,
-                       colClasses=c('character', 'numeric', 'numeric', 'character', 'character'))
+                       colClasses=c('character', 'numeric', 'numeric', 'character', 'character', 'numeric', 'numeric'))
 
 source('functionality.R')
 source('contigsPanel.R')
@@ -32,7 +32,7 @@ server <- function(input, output) {
     datatable(prepare.cluster.dataframe(input, cluster_df), 
               rownames=FALSE,
               class='compact',
-              colnames=c('Cluster Name', 'Length of Representative', '# Members', 'Name of Representatitve', 'type'),
+              colnames=c('Cluster Name', 'Length', '# Members', 'Name of Representatitve', 'Type', 'Number of viral members', 'Viral ratio'),
               selection='single',
               options = list(pageLength = 10,
                              initComplete = JS(
@@ -40,7 +40,7 @@ server <- function(input, output) {
                                "$(this.api().table().header()).css({'background-color': '#268bd2', 'color': '#fff'});",
                                "}"),
                              columnDefs = list(list(className = 'dt-right', targets=c(3,4)),
-                                               list(width = '100px', targets=c(0,1,2))))))
+                                               list(width = '60px', targets=c(0,1,2,5))))) %>% DT::formatRound(c(7)))
   
   output$cluster_counts <- renderPlot(plot.cluster.counts(input, cluster_df))
   
