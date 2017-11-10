@@ -48,7 +48,7 @@ plot.GC.vs.coverage<-function(input, df, ranges){
     ylab('Mean Coverage') +
     scale_y_log10() +
     scale_colour_solarized() + 
-    scale_size_continuous(range = c(1,12))
+    scale_size_continuous(range = c(1,12)) +
     coord_cartesian(xlim = ranges$x, ylim = ranges$y)
   return(p)
 }
