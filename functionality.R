@@ -25,16 +25,6 @@ apply.filters<-function(input, df){
 }
 
 
-prepare.cluster.dataframe<-function(input, cluster_df){
-  
-  if(!is.null(input$hybrid_rep)){
-    cluster_df<-cluster_df %>% filter(type==input$hybrid_rep)
-  }  
-  
-  return(cluster_df)
-}
-
-
 plot.cluster.summary<-function(input, df, cluster_df){
   if(!is.null(input$clusters_rows_selected)){
     cluster_df<-prepare.cluster.dataframe(input, cluster_df)
