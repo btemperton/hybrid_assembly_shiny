@@ -23,15 +23,31 @@ load.contigs.panel<-function(){
                                 choices=c('Short-only' = 'short', 'Hybrid' = 'hybrid', 'Both' = 'both'),
                                 selected = 'both')),
              
-             column(10,
+             column(7,
                     
                     plotOutput(outputId = 'contig_plot',
                                dblclick = "contig_plot_dblclick",
                                click = "contig_plot_click",
                                brush = brushOpts(id = "contig_plot_brush", resetOnNew = TRUE))),
+             
+             column(3,
+                    plotOutput(outputId = 'summary_contig_plot')),
+             
              fluidRow(
                column(12,
                       tableOutput(outputId = "contig_info"))))))
   
   
+}
+
+plot.contig.summary<-function(input, df){
+  filtered<-apply.filters(input, df)
+  p<-ggplot(filtered, aes(contig_type)) +
+    geom_bar(aes(fill=contig_type), color='black') +
+    xlab('Contig Type') + 
+    ylab('Count') +
+    scale_fill_solarized() +
+    theme(legend.position='none')
+    
+  return(p)
 }

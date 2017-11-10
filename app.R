@@ -43,6 +43,8 @@ server <- function(input, output) {
                addDist = TRUE)
   })
   
+  output$summary_contig_plot <- renderPlot(plot.contig.summary(input, df))
+  
   # Allows for zooming on the plot
   observeEvent(input$contig_plot_dblclick, {
     brush <- input$contig_plot_brush
