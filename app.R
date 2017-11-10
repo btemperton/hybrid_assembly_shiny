@@ -4,7 +4,6 @@ library(cowplot)
 library(DT)
 library(stringr)
 library(ggthemes)
-library(ggsci)
 library(scales)
 
 df = read.csv('short.hybrid.cluster.data.csv', header=TRUE,
@@ -40,7 +39,10 @@ server <- function(input, output) {
                                "function(settings, json) {",
                                "$(this.api().table().header()).css({'background-color': '#268bd2', 'color': '#fff'});",
                                "}"),
-                             columnDefs = list(list(className = 'dt-right', targets=c(3,4))))))
+                             columnDefs = list(list(className = 'dt-right', targets=c(3,4)),
+                                               list(width = '100px', targets=c(0,1,2))))))
+  
+  output$cluster_counts <- renderPlot(plot.cluster.counts(input, cluster_df))
   
   output$cluster_summary <- renderPlot(plot.cluster.summary(input, df, cluster_df))
   
