@@ -27,21 +27,48 @@ ui <- navbarPage("Comparison of Hybrid Assemblies",
 server <- function(input, output) {
   
 
-  output$contigs <- renderDataTable(prepare.contig.dataframe(input, df))
+  output$contigs <- DT::renderDataTable(prepare.contig.dataframe(input, df))
   
-  output$clusters <- DT::renderDataTable(prepare.cluster.dataframe(input, cluster_df),
-                                         selection='single')
+  output$clusters <- DT::renderDataTable(
+    datatable(prepare.cluster.dataframe(input, cluster_df), 
+              rownames=FALSE,
+              class='compact',
+              colnames=c('Cluster Name', 'Length of Representative', '# Members', 'Name of Representatitve', 'type'),
+              selection='single',
+              options = list(pageLength = 10,
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': '#268bd2', 'color': '#fff'});",
+                               "}"),
+                             columnDefs = list(list(className = 'dt-right', targets=c(3,4))))))
   
   output$cluster_summary <- renderPlot(plot.cluster.summary(input, df, cluster_df))
   
   ranges <- reactiveValues(x = NULL, y = NULL)
   output$contig_plot <- renderPlot(plot.GC.vs.coverage(input, df, ranges))
   
-  output$contig_info <- renderTable({
-    
-    nearPoints(apply.filters(input, df),
+  output$contig_info <- DT::renderDataTable({
+    datatable(  
+      nearPoints(apply.filters(input, df),
                input$contig_plot_click, threshold = 10, maxpoints = 15,
-               addDist = TRUE)
+               addDist = FALSE) %>% select(-ref_start, -ref_finish, -percent_covered),
+      options = list(pageLength = 10,
+                     initComplete = JS(
+                       "function(settings, json) {",
+                        "$(this.api().table().header()).css({'background-color': '#268bd2', 'color': '#fff'});",
+                       "}"),
+                     columnDefs = list(list(className = 'dt-right', targets=c(2,5,9)))), colnames=c('Contig id', 
+                                         'Contig Length', 
+                                         'Type', 
+                                         'VirFinder q-value', 
+                                         'Cluster Name', 
+                                         'Cluster Representative?', 
+                                         '% identity to Representative',
+                                         '% GC',
+                                         'Mean contig coverage',
+                                         'VirSorter Category',
+                                         'VirSorter Circular'), rownames=FALSE,class='compact', selection='single') %>%
+      DT::formatRound(c(4,7,8,9))
   })
   
   output$summary_contig_plot <- renderPlot(plot.contig.summary(input, df))
