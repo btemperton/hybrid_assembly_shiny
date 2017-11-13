@@ -14,7 +14,12 @@ have been increased in length (e.g. Cluster_1), or scaffolded by the long reads 
 <li><b>Short longer than hybrid</b> - The longest member of the cluster is from the short-read assembly</li>
 <li><b>Singleton S/H</b> - The cluster consists of only one member, either a short or hybrid scaffold</li>
 <li><b>Unclassified</b> - A cluster that did not meet one of the above criteria</li>
-</ul><hr/>
+</ul>
+<br/>
+Clicking on a cluster in the table will also display the proteins associated with the reference sequence and their best-hit 
+from a BLASTP search against NR. It will also show the best hit of any protein to the Prokaryotic Virus Orthologous Groups database.
+<br/>
+<hr/>
                                         "))),
             fluidRow(
               column(2,
@@ -48,8 +53,8 @@ have been increased in length (e.g. Cluster_1), or scaffolded by the long reads 
             fluidRow(
                plotOutput(outputId = 'cluster_summary')),
             
-            fluidRow(
-              DT::dataTableOutput(outputId = 'cluster_rep_genes')
+            fluidRow(column(8,
+              DT::dataTableOutput(outputId = 'cluster_rep_genes'))
             )
             
         )
@@ -94,6 +99,8 @@ prepare.protein.dataframe<-function(input, protein_df){
     cluster_df<-prepare.cluster.dataframe(input, cluster_df)
     selected <- cluster_df[input$clusters_rows_selected, ]$representative
     filtered <- filtered %>% filter(contig_id == selected)
+  } else{
+    filtered <- protein_df %>% filter(contig_id =='empty')
   }
   return(filtered %>% select(-gene_id))
 }
