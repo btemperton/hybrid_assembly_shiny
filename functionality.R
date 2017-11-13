@@ -9,9 +9,11 @@ apply.filters<-function(input, df){
   if(input$VirSorter){
     viral_values = c(1,2,4,5)
     filtered <- filtered %>% filter(virsorter_category %in% viral_values)
-    if (input$VirSorter_circular){
-      filtered <- filtered %>% filter(is_circular ==1)
-    }
+    
+  }
+  
+  if (input$VirSorter_circular){
+    filtered <- filtered %>% filter(is_circular ==1)
   }
   
   if (input$read_type=='short'){

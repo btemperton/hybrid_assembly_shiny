@@ -9,7 +9,7 @@ can also filter the number of clusters by size and whether any members were iden
 There are several types of cluster:</p>
 <ul>
 <li><b>Hybrid Extension</b> - The longest read in a cluster is from the hybrid assembly and typically denotes a cluster where short-read scaffolds 
-have been increased in length, or scaffolded by the long reads </li>
+have been increased in length (e.g. Cluster_1), or scaffolded by the long reads (e.g. Cluster_2 and Cluster_4)</li>
 <li><b>Identical</b> - The cluster comprises of two members, each of identical length. In the alignment plot, these will appear as one block</li>
 <li><b>Short longer than hybrid</b> - The longest member of the cluster is from the short-read assembly</li>
 <li><b>Singleton S/H</b> - The cluster consists of only one member, either a short or hybrid scaffold</li>
@@ -24,6 +24,9 @@ have been increased in length, or scaffolded by the long reads </li>
                                  max = 500000,
                                  step=500,
                                  value = 10000, 500000),
+                
+                checkboxInput(inputId = 'circ_rep',
+                              label='Restrict to circular representatives'),
                 
                selectInput(inputId = 'hybrid_rep',
                            label='Cluster Type:',
@@ -58,6 +61,11 @@ filter.clusters<-function(input, cluster_df){
   } else if (input$viral_ratio=='nv'){
     filtered <- filtered %>% filter(viral_ratio == 0)
   }
+  
+  if(input$circ_rep){
+    filtered <- filtered %>% filter(is_circular ==1)
+  }
+  
   return(filtered)
 }
 
