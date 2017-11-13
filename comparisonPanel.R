@@ -6,6 +6,7 @@ clustering them at 95% identity and 80% length into 'viral OTUs'.
 You can click on a cluster to show how its members aligned against the reference sequence (the one at the top). The alignment plot is ordered
 from top to bottom on scaffold length (so each row is a different scaffold). The alignments can be colored by selecting an appropriate scheme on the left-hand side
 (note coloring by contig uses a lot of colors, so there will be repetition for different contigs). You
+from top to bottom on scaffold length. The alignments can be colored by selecting an appropriate scheme on the left-hand side. You
 can also filter the number of clusters by size and whether any members were identified as viral, either by VirSorter, or by VirFinder.
 There are several types of cluster:</p>
 <ul>
@@ -21,6 +22,7 @@ Clicking on a cluster in the table will also display the proteins associated wit
 from a BLASTP search against NR. It will also show the best hit of any protein to the Prokaryotic Virus Orthologous Groups database.
 <br/>
 <hr/>
+</ul><hr/>
                                         "))),
             fluidRow(
               column(2,
@@ -60,8 +62,6 @@ from a BLASTP search against NR. It will also show the best hit of any protein t
             
         )
     )
-  
-     
 }
 
 

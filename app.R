@@ -17,6 +17,7 @@ cluster_df <- read.csv('clusters.csv', header=TRUE,
 gene_map <- read.csv('gene.map.representatives.csv', header=TRUE,
                      colClasses=c('character', 'character', 'numeric', 'numeric', 'character', 'character'))
 
+
 source('functionality.R')
 source('contigsPanel.R')
 source('comparisonPanel.R')
@@ -35,7 +36,7 @@ server <- function(input, output) {
     datatable(prepare.cluster.dataframe(input, cluster_df), 
               rownames=FALSE,
               class='compact',
-              #colnames=c('Cluster Name', 'Length', '# Members', 'Name of Representatitve', 'Type', 'Number of viral members', 'Viral ratio'),
+              colnames=c('Cluster Name', 'Length', '# Members', 'Name of Representatitve', 'Type', 'Number of viral members', 'Viral ratio'),
               selection='single',
               options = list(pageLength = 10,
                              initComplete = JS(
@@ -49,7 +50,7 @@ server <- function(input, output) {
   
   output$cluster_summary <- renderPlot(plot.cluster.summary(input, df, cluster_df))
   
-  
+
   output$cluster_rep_genes <-DT::renderDataTable(
     datatable(prepare.protein.dataframe(input, cluster_df, gene_map),
               rownames=FALSE,
