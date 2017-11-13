@@ -46,9 +46,16 @@ have been increased in length (e.g. Cluster_1), or scaffolded by the long reads 
             column(3,
                    plotOutput(outputId = 'cluster_counts'))),
             fluidRow(
-               plotOutput(outputId = 'cluster_summary')))
+               plotOutput(outputId = 'cluster_summary')),
+            
+            fluidRow(
+              DT::dataTableOutput(outputId = 'cluster_rep_genes')
             )
-         
+            
+        )
+    )
+  
+     
 }
 
 
@@ -78,7 +85,17 @@ prepare.cluster.dataframe<-function(input, cluster_df){
     filtered<-filtered %>% filter(type==input$hybrid_rep)
   }
   
-  return(filtered)
+  return(filtered %>% select(-is_circular))
+}
+
+prepare.protein.dataframe<-function(input, protein_df){
+  filtered <- protein_df
+  if(!is.null(input$clusters_rows_selected)){
+    cluster_df<-prepare.cluster.dataframe(input, cluster_df)
+    selected <- cluster_df[input$clusters_rows_selected, ]$representative
+    filtered <- filtered %>% filter(contig_id == selected)
+  }
+  return(filtered %>% select(-gene_id))
 }
 
 

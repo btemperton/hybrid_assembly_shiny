@@ -14,6 +14,9 @@ df$virsorter_category <- as.factor(df$virsorter_category)
 cluster_df <- read.csv('clusters.csv', header=TRUE,
                        colClasses=c('character', 'numeric', 'numeric', 'character', 'character', 'numeric', 'numeric'))
 
+gene_map <- read.csv('gene.map.representatives.csv', header=TRUE,
+                     colClasses=c('character', 'character', 'numeric', 'numeric', 'character', 'character'))
+
 source('functionality.R')
 source('contigsPanel.R')
 source('comparisonPanel.R')
@@ -32,7 +35,7 @@ server <- function(input, output) {
     datatable(prepare.cluster.dataframe(input, cluster_df), 
               rownames=FALSE,
               class='compact',
-              colnames=c('Cluster Name', 'Length', '# Members', 'Name of Representatitve', 'Type', 'Number of viral members', 'Viral ratio'),
+              #colnames=c('Cluster Name', 'Length', '# Members', 'Name of Representatitve', 'Type', 'Number of viral members', 'Viral ratio'),
               selection='single',
               options = list(pageLength = 10,
                              initComplete = JS(
@@ -45,6 +48,25 @@ server <- function(input, output) {
   output$cluster_counts <- renderPlot(plot.cluster.counts(input, cluster_df))
   
   output$cluster_summary <- renderPlot(plot.cluster.summary(input, df, cluster_df))
+  
+  
+  output$cluster_rep_genes <-DT::renderDataTable(
+    datatable(prepare.protein.dataframe(input, gene_map),
+              rownames=FALSE,
+              class='compact',
+              colnames=c('Contig', 'start', 'end', 'strand', 'Best NR Hit', 'VOG'),
+              selection = 'single',
+              options = list(pageLength = 10,
+                             columnDefs = list(list(className = 'dt-right', targets=c(1,2,3)),
+                                               list(width = '100px', targets=c(0)),
+                                               list(width = '60px', targets=c(1,2,3))),
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': '#268bd2', 'color': '#fff'});",
+                               "}"))))
+    
+  
+  
   
   ranges <- reactiveValues(x = NULL, y = NULL)
   output$contig_plot <- renderPlot(plot.GC.vs.coverage(input, df, ranges))
