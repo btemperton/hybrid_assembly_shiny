@@ -4,7 +4,8 @@ load.comparison.panel<-function(cluster_df){
 <p>Here, you can examine the content of the clusters. Clusters were created by combining all short and hybrid scaffolds and then
 clustering them at 95% identity and 80% length into 'viral OTUs'. 
 You can click on a cluster to show how its members aligned against the reference sequence (the one at the top). The alignment plot is ordered
-from top to bottom on scaffold length. The alignments can be colored by selecting an appropriate scheme on the left-hand side. You
+from top to bottom on scaffold length (so each row is a different scaffold). The alignments can be colored by selecting an appropriate scheme on the left-hand side
+(note coloring by contig uses a lot of colors, so there will be repetition for different contigs). You
 can also filter the number of clusters by size and whether any members were identified as viral, either by VirSorter, or by VirFinder.
 There are several types of cluster:</p>
 <ul>
@@ -93,7 +94,7 @@ prepare.cluster.dataframe<-function(input, cluster_df){
   return(filtered %>% select(-is_circular))
 }
 
-prepare.protein.dataframe<-function(input, protein_df){
+prepare.protein.dataframe<-function(input, cluster_df, protein_df){
   filtered <- protein_df
   if(!is.null(input$clusters_rows_selected)){
     cluster_df<-prepare.cluster.dataframe(input, cluster_df)

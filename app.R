@@ -51,7 +51,7 @@ server <- function(input, output) {
   
   
   output$cluster_rep_genes <-DT::renderDataTable(
-    datatable(prepare.protein.dataframe(input, gene_map),
+    datatable(prepare.protein.dataframe(input, cluster_df, gene_map),
               rownames=FALSE,
               class='compact',
               colnames=c('Contig', 'start', 'end', 'strand', 'Best NR Hit', 'VOG'),
