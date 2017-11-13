@@ -56,7 +56,11 @@ from a BLASTP search against NR. It will also show the best hit of any protein t
             fluidRow(
                plotOutput(outputId = 'cluster_summary')),
             
-            fluidRow(column(8,
+            fluidRow(column(3, h2('Cluster Members')), column(7, h2('Predicted Proteins on Representative'))),
+            
+            fluidRow(column(3,
+                            DT::dataTableOutput(outputId = 'cluster_members')),
+                     column(7,
               DT::dataTableOutput(outputId = 'cluster_rep_genes'))
             )
             
@@ -104,6 +108,18 @@ prepare.protein.dataframe<-function(input, cluster_df, protein_df){
     filtered <- protein_df %>% filter(contig_id =='empty')
   }
   return(filtered %>% select(-gene_id))
+}
+
+prepare.cluster.members.dataframe<-function(input, df, cluster_df){
+  if(!is.null(input$clusters_rows_selected)){
+    cluster_df<-prepare.cluster.dataframe(input, cluster_df)
+    selected <- cluster_df[input$clusters_rows_selected, ]$cluster_name
+    filtered <- df %>% filter(cluster_name == selected)
+  } else{
+    filtered <- df %>% filter(contig_id =='empty')
+  }
+  
+  return(filtered %>% select(contig_id, contig_len) %>% arrange(desc(contig_len)))
 }
 
 

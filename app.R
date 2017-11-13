@@ -65,6 +65,19 @@ server <- function(input, output) {
                                "function(settings, json) {",
                                "$(this.api().table().header()).css({'background-color': '#268bd2', 'color': '#fff'});",
                                "}"))))
+  
+  output$cluster_members <- DT::renderDataTable(
+    datatable(prepare.cluster.members.dataframe(input, df, cluster_df),
+              rownames = FALSE,
+              class='compact',
+              colnames=c('Contig Name', 'Length (bp)'),
+              selection = 'none',
+              options = list(pageLength = 10,
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': '#756bb1', 'color': '#fff'});",
+                               "}")))
+  )
     
   
   
