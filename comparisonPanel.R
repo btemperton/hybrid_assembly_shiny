@@ -128,8 +128,10 @@ plot.cluster.summary<-function(input, df, cluster_df){
     cluster_df<-prepare.cluster.dataframe(input, cluster_df)
     selected <- cluster_df[input$clusters_rows_selected, ]$cluster_name
     filtered <- df %>% filter(cluster_name == selected)
+    if(nrow(filtered)> 1){
     p <- plot.cluster.alignment(filtered, input)
     return(p)
+    }
   }
 }
 
@@ -174,6 +176,8 @@ plot.cluster.alignment<-function(cluster_df, input){
   members_start$ref_finish <- members_finish$ref_finish
   members_start$ref_start<-as.numeric(members_start$ref_start)
   members_start$ref_finish<-as.numeric(members_finish$ref_finish)
+  members_final<-members_start %>% bind_rows(representative)
+
   
   
   #members_final <- members_start %>% group_by(contig_id) %>%
