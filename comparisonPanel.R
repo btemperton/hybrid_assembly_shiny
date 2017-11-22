@@ -62,7 +62,10 @@ from a BLASTP search against NR. It will also show the best hit of any protein t
                             DT::dataTableOutput(outputId = 'cluster_members')),
                      column(7,
               DT::dataTableOutput(outputId = 'cluster_rep_genes'))
-            )
+            
+            ),
+            fluidRow(column(7, h2('Representative shares a vcontact group with these NCBI bacteriophages:'))),
+            fluidRow(column(7, DT::dataTableOutput(outputId = 'vcontact_members')))
             
         )
     )
@@ -120,6 +123,23 @@ prepare.cluster.members.dataframe<-function(input, df, cluster_df){
   }
   
   return(filtered %>% select(contig_id, contig_len) %>% arrange(desc(contig_len)))
+}
+
+prepare.vcontact.dataframe<-function(input, cluster_df, vcontact_map){
+  if(!is.null(input$clusters_rows_selected)){
+    cluster_df<-prepare.cluster.dataframe(input, cluster_df)
+    selected <- cluster_df[input$clusters_rows_selected, ]$pos_cluster
+    if(!is.na(selected)){
+      filtered <- vcontact_map %>% filter(pos_cluster== selected)
+      filtered <- filtered %>% filter(!(taxonomy==''))
+    } else{
+      filtered <- vcontact_map %>% filter(id =='empty')
+    }
+
+  } else{
+    filtered <- vcontact_map %>% filter(id =='empty')
+  }
+  return(filtered %>% select(-pos_cluster))
 }
 
 

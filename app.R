@@ -12,10 +12,13 @@ df = read.csv('short.hybrid.cluster.data.csv', header=TRUE,
 df$virsorter_category <- as.factor(df$virsorter_category)
 
 cluster_df <- read.csv('clusters.csv', header=TRUE,
-                       colClasses=c('character', 'numeric', 'numeric', 'character', 'character', 'numeric', 'numeric'))
+                       colClasses=c('character', 'numeric', 'numeric', 'character', 'character', 'numeric', 'numeric', 'numeric'))
 
 gene_map <- read.csv('gene.map.representatives.csv', header=TRUE,
                      colClasses=c('character', 'character', 'numeric', 'numeric', 'character', 'character'))
+
+vcontact_map <-read.csv('vcontact.membership.csv', header=TRUE, 
+                        colClasses = c('character', 'character', 'character', 'numeric'))
 
 
 source('functionality.R')
@@ -33,7 +36,7 @@ server <- function(input, output) {
   output$contigs <- DT::renderDataTable(prepare.contig.dataframe(input, df))
   
   output$clusters <- DT::renderDataTable(
-    datatable(prepare.cluster.dataframe(input, cluster_df), 
+    datatable(prepare.cluster.dataframe(input, cluster_df) %>% select(-pos_cluster), 
               rownames=FALSE,
               class='compact',
               colnames=c('Cluster Name', 'Length', '# Members', 'Name of Representatitve', 'Type', 'Number of viral members', 'Viral ratio'),
@@ -66,6 +69,7 @@ server <- function(input, output) {
                                "$(this.api().table().header()).css({'background-color': '#268bd2', 'color': '#fff'});",
                                "}"))))
   
+  
   output$cluster_members <- DT::renderDataTable(
     datatable(prepare.cluster.members.dataframe(input, df, cluster_df),
               rownames = FALSE,
@@ -76,8 +80,19 @@ server <- function(input, output) {
                              initComplete = JS(
                                "function(settings, json) {",
                                "$(this.api().table().header()).css({'background-color': '#756bb1', 'color': '#fff'});",
-                               "}")))
-  )
+                               "}"))))
+    
+  output$vcontact_members <- DT::renderDataTable(
+    datatable(prepare.vcontact.dataframe(input, cluster_df, vcontact_map),
+                rownames=FALSE,
+                class='compact',
+                colnames=c('id', 'Name', 'Taxonomy'),
+      selection = 'single',
+      options = list(pageLength = 10,
+                     initComplete = JS(
+                       "function(settings, json) {",
+                       "$(this.api().table().header()).css({'background-color': '#268bd2', 'color': '#fff'});",
+                       "}"))))
     
   
   
